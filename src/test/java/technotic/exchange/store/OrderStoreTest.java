@@ -2,8 +2,11 @@ package technotic.exchange.store;
 
 import org.junit.Test;
 import technotic.exchange.model.*;
-import technotic.exchange.store.OrderStore;
 
+import java.util.Collections;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static technotic.exchange.model.Direction.SELL;
 
 public class OrderStoreTest {
@@ -22,6 +25,6 @@ public class OrderStoreTest {
         orderStore.add(order);
 
         // Then
+        assertThat(orderStore.getOpenOrders(user1), equalTo(Collections.<Order>emptyList()));
     }
-
 }
