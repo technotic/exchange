@@ -1,7 +1,5 @@
 package technotic.exchange.store;
 
-import technotic.exchange.model.Direction;
-import technotic.exchange.model.OpenOrderInterest;
 import technotic.exchange.model.Order;
 
 import java.util.ArrayList;
@@ -26,10 +24,4 @@ public class OrderStore {
     private List<Order> findMatch(Order orderToMatch) {
         return openOrders.stream().filter(order -> order.matches(orderToMatch)).collect(Collectors.toList());
     }
-
-//    public List<OpenOrderInterest> getOpenInterest(String reutersInstrumentCode, Direction direction) {
-//        return null;
-////        return openOrders.stream().filter(order -> order.getReutersInstrumentCode().equals(reutersInstrumentCode) && order.getDirection().equals(direction))
-////                .collect(Collectors.toList());
-//    }
 }
