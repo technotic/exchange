@@ -1,14 +1,10 @@
 package technotic.exchange.store;
 
 import org.junit.Test;
-import technotic.exchange.model.OpenInterest;
 import technotic.exchange.model.Order;
 
 import java.math.BigDecimal;
-import java.util.List;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static technotic.exchange.model.Direction.BUY;

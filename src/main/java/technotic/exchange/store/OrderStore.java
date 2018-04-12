@@ -10,15 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.summingInt;
 
 public class OrderStore {
 
-    private List<Order> openOrders = new ArrayList<>();
-    private List<Order> executedOrders = new ArrayList<>();
+    private final List<Order> openOrders = new ArrayList<>();
+    private final List<Order> executedOrders = new ArrayList<>();
 
     public boolean placeOrder(Order order) {
 
@@ -78,7 +77,7 @@ public class OrderStore {
         } else {
             BigDecimal totalExecutionPrice = executedOrdersForRIC
                     .stream()
-                    .map(order -> order.getPrice())
+                    .map(Order::getPrice)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             return totalExecutionPrice.divide(new BigDecimal(executedOrdersForRIC.size()), BigDecimal.ROUND_UP);
