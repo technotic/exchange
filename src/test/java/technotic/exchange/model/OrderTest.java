@@ -14,8 +14,8 @@ public class OrderTest {
     public void shouldMatchOrdersWhereBuyPriceEqualToSellPrice() {
 
         // Given
-        Order order1 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1");
-        Order order2 = new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1");
+        Order order1 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1", 0);
+        Order order2 = new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1", 0);
 
         // Expect
         assertThat(order1.matches(order2), is(true));
@@ -25,8 +25,8 @@ public class OrderTest {
     public void shouldMatchOrdersWhereSellPriceLessThanSellPrice() {
 
         // Given
-        Order order1 = new Order(SELL, 1000, "VOD.L", bd("90.2"), "User1");
-        Order order2 = new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1");
+        Order order1 = new Order(SELL, 1000, "VOD.L", bd("90.2"), "User1", 0);
+        Order order2 = new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1", 0);
 
         // Expect
         assertThat(order1.matches(order2), is(true));
@@ -36,8 +36,8 @@ public class OrderTest {
     public void shouldNotMatchTwoSellOrders() {
 
         // Given
-        Order order1 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1");
-        Order order2 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1");
+        Order order1 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1", 0);
+        Order order2 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1", 0);
 
         // Expect
         assertThat(order1.matches(order2), is(false));
@@ -47,8 +47,8 @@ public class OrderTest {
     public void shouldNotMatchTwoBuyOrders() {
 
         // Given
-        Order order1 = new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1");
-        Order order2 = new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1");
+        Order order1 = new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1", 0);
+        Order order2 = new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1", 0);
 
         // Expect
         assertThat(order1.matches(order2), is(false));
@@ -58,8 +58,8 @@ public class OrderTest {
     public void shouldNotMatchOrdersForDifferentQuantity() {
 
         // Given
-        Order order1 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1");
-        Order order2 = new Order(BUY, 900, "VOD.L", bd("100.2"), "User1");
+        Order order1 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1", 0);
+        Order order2 = new Order(BUY, 900, "VOD.L", bd("100.2"), "User1", 0);
 
         // Expect
         assertThat(order1.matches(order2), is(false));
@@ -69,8 +69,8 @@ public class OrderTest {
     public void shouldNotMatchOrdersForDifferentReutersInstrumentCode() {
 
         // Given
-        Order order1 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1");
-        Order order2 = new Order(BUY, 1000, "VOD.I", bd("100.2"), "User1");
+        Order order1 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1", 0);
+        Order order2 = new Order(BUY, 1000, "VOD.I", bd("100.2"), "User1", 0);
 
         // Expect
         assertThat(order1.matches(order2), is(false));

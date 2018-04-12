@@ -1,24 +1,36 @@
 package technotic.exchange.store;
 
 import technotic.exchange.model.Order;
+import technotic.exchange.sorting.OrderSorter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.unmodifiableList;
 
 public class OrderStore {
 
     private List<Order> openOrders = new ArrayList<>();
 
-    public Optional<Order> placeOrder(Order order) {
+    public boolean placeOrder(Order order) {
         List<Order> matchedOrders = findMatch(order);
         if (matchedOrders.size() == 0) {
             openOrders.add(order);
-            return Optional.empty();
+            return false;
+        } else if (matchedOrders.size() == 1) {
+            openOrders.remove(matchedOrders.get(0));
+            return true;
         } else {
-            return Optional.of(order);
+            // TODO how to inject and how to reverse the list?
+            List<Order> ordersSortedByPriceThenTime = new OrderSorter().sortByPriceThenTime(openOrders);
+            openOrders.remove(ordersSortedByPriceThenTime.get(0));
+            return true;
         }
+    }
+
+    public List<Order> getOpenOrders() {
+        return unmodifiableList(openOrders);
     }
 
     private List<Order> findMatch(Order orderToMatch) {

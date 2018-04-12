@@ -2,9 +2,13 @@ package technotic.exchange.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.math.BigDecimal;
 
+import static java.util.Arrays.stream;
+import static org.apache.commons.lang.builder.ToStringBuilder.reflectionToString;
+import static technotic.exchange.model.Direction.BUY;
 import static technotic.exchange.model.Direction.SELL;
 import static technotic.exchange.utils.BigDecimalUtils.lessThanOrEqual;
 
@@ -15,13 +19,15 @@ public class Order {
     private final String reutersInstrumentCode;
     private final BigDecimal price;
     private final String user;
+    private final long timestampPlaced;
 
-    public Order(Direction direction, int quantity, String reutersInstrumentCode, BigDecimal price, String user) {
+    public Order(Direction direction, int quantity, String reutersInstrumentCode, BigDecimal price, String user, long timestampPlaced) {
         this.direction = direction;
         this.reutersInstrumentCode = reutersInstrumentCode;
         this.quantity = quantity;
         this.price = price;
         this.user = user;
+        this.timestampPlaced = timestampPlaced;
     }
 
     public Direction getDirection() {
@@ -44,6 +50,10 @@ public class Order {
         return user;
     }
 
+    public long getTimePlaced() {
+        return timestampPlaced;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,6 +68,7 @@ public class Order {
                 .append(reutersInstrumentCode, order.reutersInstrumentCode)
                 .append(price, order.price)
                 .append(user, order.user)
+                .append(timestampPlaced, order.timestampPlaced)
                 .isEquals();
     }
 
@@ -69,7 +80,13 @@ public class Order {
                 .append(quantity)
                 .append(price)
                 .append(user)
+                .append(timestampPlaced)
                 .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
     }
 
     public boolean matches(Order order) {
@@ -79,14 +96,16 @@ public class Order {
                 && sellPriceLessThanOrEqualToBuy(this, order);
     }
 
-    /**
-     * Assumes order1 and order2 are opposite directions.
-     */
-    private static boolean sellPriceLessThanOrEqualToBuy(Order order1, Order order2) {
-        if (order1.getDirection() == SELL) {
-            return lessThanOrEqual(order1.price, order2.price);
-        } else {
-            return lessThanOrEqual(order2.price, order1.price);
-        }
+    private static boolean sellPriceLessThanOrEqualToBuy(Order... buySellPair) {
+        return lessThanOrEqual(
+                orderWithDirection(SELL, buySellPair).price,
+                orderWithDirection(BUY, buySellPair).price);
+    }
+
+    private static Order orderWithDirection(Direction direction, Order... orders) {
+        return stream(orders)
+                .filter(order -> order.getDirection() == direction)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No order found for direction " + direction));
     }
 }
