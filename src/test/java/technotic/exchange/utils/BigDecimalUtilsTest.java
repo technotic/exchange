@@ -27,5 +27,4 @@ public class BigDecimalUtilsTest {
         assertThat(lessThanOrEqual(bd("90.01"), bd("100.01")), is(true));
         assertThat(lessThanOrEqual(bd("100.01"), bd("90.01")), is(false));
     }
-
 }

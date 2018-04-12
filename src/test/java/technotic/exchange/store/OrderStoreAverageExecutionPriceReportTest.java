@@ -19,7 +19,7 @@ public class OrderStoreAverageExecutionPriceReportTest {
     public void shouldReportAverageExecutionPriceRICAsEmptyWhenNoOrders() {
 
         // Expect
-        assertThat(orderStore.getAverageExecutionPrice("VOD.L"), equalTo(BigDecimal.ZERO));
+        assertThat(orderStore.averageExecutionPrice("VOD.L"), equalTo(BigDecimal.ZERO));
     }
 
     @Test
@@ -30,7 +30,7 @@ public class OrderStoreAverageExecutionPriceReportTest {
         orderStore.placeOrder(new Order(SELL, 500, "VOD.L", bd("100.2"), "User1", 2));
 
         // Expect
-        assertThat(orderStore.getAverageExecutionPrice("VOD.L"), equalTo(BigDecimal.ZERO));
+        assertThat(orderStore.averageExecutionPrice("VOD.L"), equalTo(BigDecimal.ZERO));
     }
 
     @Test
@@ -41,7 +41,7 @@ public class OrderStoreAverageExecutionPriceReportTest {
         orderStore.placeOrder(new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1", 2));
 
         // Expect
-        assertThat(orderStore.getAverageExecutionPrice("VOD.L"), equalTo(bd("100.2")));
+        assertThat(orderStore.averageExecutionPrice("VOD.L"), equalTo(bd("100.2")));
     }
 
     @Test
@@ -55,6 +55,6 @@ public class OrderStoreAverageExecutionPriceReportTest {
         orderStore.placeOrder(new Order(BUY, 500, "VOD.L", bd("200"), "User1", 2));
 
         // Expect
-        assertThat(orderStore.getAverageExecutionPrice("VOD.L"), equalTo(bd("150")));
+        assertThat(orderStore.averageExecutionPrice("VOD.L"), equalTo(bd("150")));
     }
 }

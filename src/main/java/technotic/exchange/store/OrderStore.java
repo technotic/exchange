@@ -66,7 +66,7 @@ public class OrderStore {
                 .collect(Collectors.toList());
     }
 
-    public BigDecimal getAverageExecutionPrice(String reutersInstrumentCode) {
+    public BigDecimal averageExecutionPrice(String reutersInstrumentCode) {
         List<Order> executedOrdersForRIC = executedOrders
                 .stream()
                 .filter(order -> order.getReutersInstrumentCode().equals(reutersInstrumentCode))
@@ -80,7 +80,7 @@ public class OrderStore {
                     .map(Order::getPrice)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            return totalExecutionPrice.divide(new BigDecimal(executedOrdersForRIC.size()), BigDecimal.ROUND_UP);
+            return totalExecutionPrice.divide(new BigDecimal(executedOrdersForRIC.size()), BigDecimal.ROUND_HALF_UP);
         }
     }
 }
