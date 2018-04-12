@@ -9,14 +9,14 @@ public enum Direction {
     BUY {
         @Override
         public Comparator<Order> getComparator() {
-            return comparing(Order::getPrice)
+            return comparing(Order::getPrice).reversed()
                     .thenComparing(Order::getTimePlaced);
         }
     },
     SELL {
         @Override
         public Comparator<Order> getComparator() {
-            return comparing(Order::getPrice).reversed()
+            return comparing(Order::getPrice)
                     .thenComparing(Order::getTimePlaced);
         }
     };

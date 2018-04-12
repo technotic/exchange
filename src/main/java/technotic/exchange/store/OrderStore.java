@@ -22,8 +22,8 @@ public class OrderStore {
             openOrders.remove(matchedOrders.get(0));
             return true;
         } else {
-            // TODO how to inject and how to reverse the list?
-            List<Order> ordersSortedByPriceThenTime = new OrderSorter().sortByPriceThenTime(openOrders);
+            // TODO how to inject?
+            List<Order> ordersSortedByPriceThenTime = new OrderSorter().sortByPriceThenTimeReversed(openOrders);
             openOrders.remove(ordersSortedByPriceThenTime.get(0));
             return true;
         }
