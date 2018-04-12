@@ -12,6 +12,11 @@ public enum Direction {
             return comparing(Order::getPrice).reversed()
                     .thenComparing(Order::getTimePlaced);
         }
+
+        @Override
+        public int getSign() {
+            return 1;
+        }
     },
     SELL {
         @Override
@@ -19,7 +24,14 @@ public enum Direction {
             return comparing(Order::getPrice)
                     .thenComparing(Order::getTimePlaced);
         }
+
+        @Override
+        public int getSign() {
+            return -1;
+        }
     };
 
     public abstract Comparator<Order> getComparator();
+
+    public abstract int getSign();
 }

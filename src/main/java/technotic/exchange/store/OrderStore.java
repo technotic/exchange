@@ -1,6 +1,7 @@
 package technotic.exchange.store;
 
 import technotic.exchange.model.Direction;
+import technotic.exchange.model.Execution;
 import technotic.exchange.model.OpenInterest;
 import technotic.exchange.model.Order;
 import technotic.exchange.sorting.OrderSorter;
@@ -17,7 +18,7 @@ import static java.util.stream.Collectors.summingInt;
 public class OrderStore {
 
     private final List<Order> openOrders = new ArrayList<>();
-    private final List<Order> executedOrders = new ArrayList<>();
+    private final List<Execution> executions = new ArrayList<>();
 
     public boolean placeOrder(Order order) {
 
@@ -45,7 +46,7 @@ public class OrderStore {
 
     private void executeOrder(Order executedOrder, Order matchedOrder) {
         openOrders.remove(matchedOrder);
-        executedOrders.add(executedOrder);
+        executions.add(new Execution(executedOrder, matchedOrder));
     }
 
     private List<Order> findMatch(Order orderToMatch) {
@@ -67,8 +68,9 @@ public class OrderStore {
     }
 
     public BigDecimal averageExecutionPrice(String reutersInstrumentCode) {
-        List<Order> executedOrdersForRIC = executedOrders
+        List<Order> executedOrdersForRIC = executions
                 .stream()
+                .map(execution -> execution.getExecutedOrder())
                 .filter(order -> order.getReutersInstrumentCode().equals(reutersInstrumentCode))
                 .collect(Collectors.toList());
 
@@ -82,5 +84,14 @@ public class OrderStore {
 
             return totalExecutionPrice.divide(new BigDecimal(executedOrdersForRIC.size()), BigDecimal.ROUND_HALF_UP);
         }
+    }
+
+    public int executedQuantity(String reutersInstrumentCode, String user) {
+        return executions
+                .stream()
+                .filter(execution -> execution.getExecutedOrder().getReutersInstrumentCode().equals(reutersInstrumentCode) && execution.isParty(user))
+                .map(execution -> execution.getRelatedOrder(user))
+                .mapToInt(order -> order.getQuantity() * order.getDirection().getSign())
+                .sum();
     }
 }
