@@ -2,21 +2,24 @@ package technotic.exchange.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.math.BigDecimal;
 
-public class OpenOrderInterest {
+import static org.apache.commons.lang.builder.ToStringBuilder.reflectionToString;
+
+public class OpenInterest {
 
     private final int totalOrderQuantity;
     private final BigDecimal orderPrice;
 
-    public OpenOrderInterest(int totalOrderQuantity, BigDecimal orderPrice) {
+    public OpenInterest(int totalOrderQuantity, BigDecimal orderPrice) {
         this.totalOrderQuantity = totalOrderQuantity;
         this.orderPrice = orderPrice;
     }
 
-    public static OpenOrderInterest openOrderInterest(int totalOrderQuantity, BigDecimal orderPrice) {
-        return new OpenOrderInterest(totalOrderQuantity, orderPrice);
+    public static OpenInterest openOrderInterest(int totalOrderQuantity, BigDecimal orderPrice) {
+        return new OpenInterest(totalOrderQuantity, orderPrice);
     }
 
     public int getTotalOrderQuantity() {
@@ -33,7 +36,7 @@ public class OpenOrderInterest {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        OpenOrderInterest that = (OpenOrderInterest) o;
+        OpenInterest that = (OpenInterest) o;
 
         return new EqualsBuilder()
                 .append(totalOrderQuantity, that.totalOrderQuantity)
@@ -48,4 +51,10 @@ public class OpenOrderInterest {
                 .append(orderPrice)
                 .toHashCode();
     }
+
+    @Override
+    public String toString() {
+        return reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
+    }
+
 }

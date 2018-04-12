@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class OrderSorter {
 
-    public List<Order> sortByPriceThenTimeReversed(List<Order> orders) {
+    public List<Order> sortByPriceThenTime(List<Order> orders) {
         if (orders.isEmpty()) {
             return Collections.emptyList();
         }

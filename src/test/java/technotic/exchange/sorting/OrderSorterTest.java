@@ -25,7 +25,7 @@ public class OrderSorterTest {
     public void shouldSortEmptyListAsEmptyList() {
 
         // Expect
-        assertThat(orderSorter.sortByPriceThenTimeReversed(Collections.emptyList()), equalTo(Collections.emptyList()));
+        assertThat(orderSorter.sortByPriceThenTime(Collections.emptyList()), equalTo(Collections.emptyList()));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class OrderSorterTest {
         Order o4 = new Order(BUY, 1000, "VOD.L", bd("101.0"), "User1", 1);
 
         // Expect
-        assertThat(orderSorter.sortByPriceThenTimeReversed(asList(o1, o2, o3, o4)), equalTo(asList(o4, o1, o2, o3)));
+        assertThat(orderSorter.sortByPriceThenTime(asList(o1, o2, o3, o4)), equalTo(asList(o4, o1, o2, o3)));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class OrderSorterTest {
         Order o4 = new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1", 4);
 
         // Expect
-        assertThat(orderSorter.sortByPriceThenTimeReversed(asList(o1, o2, o3, o4)), equalTo(asList(o2, o3, o1, o4)));
+        assertThat(orderSorter.sortByPriceThenTime(asList(o1, o2, o3, o4)), equalTo(asList(o2, o3, o1, o4)));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class OrderSorterTest {
         Order o4 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1", 4);
 
         // Expect
-        assertThat(orderSorter.sortByPriceThenTimeReversed(asList(o1, o2, o3, o4)), equalTo(asList(o4, o3, o1, o2)));
+        assertThat(orderSorter.sortByPriceThenTime(asList(o1, o2, o3, o4)), equalTo(asList(o4, o3, o1, o2)));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class OrderSorterTest {
         thrown.expect(IllegalArgumentException.class);
 
         // When
-        orderSorter.sortByPriceThenTimeReversed(asList(o1, o2));
+        orderSorter.sortByPriceThenTime(asList(o1, o2));
     }
 
 }

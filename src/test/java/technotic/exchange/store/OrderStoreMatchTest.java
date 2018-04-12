@@ -11,7 +11,7 @@ import static technotic.exchange.model.Direction.BUY;
 import static technotic.exchange.model.Direction.SELL;
 import static technotic.exchange.utils.BigDecimalUtils.bd;
 
-public class OrderStoreTest {
+public class OrderStoreMatchTest {
 
     private OrderStore orderStore = new OrderStore();
 
@@ -185,5 +185,24 @@ public class OrderStoreTest {
         // Then
         assertThat(matched, is(true));
         assertThat(orderStore.getOpenOrders(), equalTo(asList(originalOrder1)));
+    }
+
+    @Test
+    public void shouldMatchBuyAgainstOrderWithLowestPriceWhenMultipleMatches() {
+
+        // Given
+        Order originalOrder1 = new Order(SELL, 1000, "VOD.L", bd("100.2"), "User1", 1);
+        orderStore.placeOrder(originalOrder1);
+        Order originalOrder2 = new Order(SELL, 1000, "VOD.L", bd("110.2"), "User1", 2);
+        orderStore.placeOrder(originalOrder2);
+
+        Order order = new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1", 3);
+
+        // When
+        boolean matched = orderStore.placeOrder(order);
+
+        // Then
+        assertThat(matched, is(true));
+        assertThat(orderStore.getOpenOrders(), equalTo(asList(originalOrder2)));
     }
 }
