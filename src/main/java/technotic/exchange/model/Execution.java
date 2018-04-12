@@ -14,12 +14,8 @@ public class Execution {
         return executedOrder;
     }
 
-    public Order getMatchedOrder() {
-        return matchedOrder;
-    }
-
-    public boolean isParty(String user) {
-        return executedOrder.getUser().equals(user) || matchedOrder.getUser().equals(user);
+    public boolean isRelatedTo(String user) {
+        return executedOrder.isForUser(user) || matchedOrder.isForUser(user);
     }
 
     public Order getRelatedOrder(String user) {
@@ -30,5 +26,9 @@ public class Execution {
         } else {
             throw new IllegalArgumentException("User is not a party in this execution");
         }
+    }
+
+    public boolean isForRIC(String reutersInstrumentCode) {
+        return executedOrder.isForRIC(reutersInstrumentCode);
     }
 }

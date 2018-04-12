@@ -33,7 +33,6 @@ public class OrderStore {
             return true;
 
         } else {
-            // TODO how to inject?
             List<Order> ordersSortedByPriceThenTime = new OrderSorter().sortByPriceThenTime(openOrders);
             executeOrder(order, ordersSortedByPriceThenTime.get(0));
             return true;
@@ -70,7 +69,7 @@ public class OrderStore {
     public BigDecimal averageExecutionPrice(String reutersInstrumentCode) {
         List<Order> executedOrdersForRIC = executions
                 .stream()
-                .map(execution -> execution.getExecutedOrder())
+                .map(Execution::getExecutedOrder)
                 .filter(order -> order.getReutersInstrumentCode().equals(reutersInstrumentCode))
                 .collect(Collectors.toList());
 
@@ -89,7 +88,7 @@ public class OrderStore {
     public int executedQuantity(String reutersInstrumentCode, String user) {
         return executions
                 .stream()
-                .filter(execution -> execution.getExecutedOrder().getReutersInstrumentCode().equals(reutersInstrumentCode) && execution.isParty(user))
+                .filter(execution -> execution.isForRIC(reutersInstrumentCode) && execution.isRelatedTo(user))
                 .map(execution -> execution.getRelatedOrder(user))
                 .mapToInt(order -> order.getQuantity() * order.getDirection().getSign())
                 .sum();

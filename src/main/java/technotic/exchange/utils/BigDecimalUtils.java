@@ -2,10 +2,7 @@ package technotic.exchange.utils;
 
 import java.math.BigDecimal;
 
-public class BigDecimalUtils {
-
-    private BigDecimalUtils() {
-    }
+final public class BigDecimalUtils {
 
     public static BigDecimal bd(String value) {
         return new BigDecimal(value);

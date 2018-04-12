@@ -18,10 +18,6 @@ public class OpenInterest {
         this.orderPrice = orderPrice;
     }
 
-    public static OpenInterest openOrderInterest(int totalOrderQuantity, BigDecimal orderPrice) {
-        return new OpenInterest(totalOrderQuantity, orderPrice);
-    }
-
     public int getTotalOrderQuantity() {
         return totalOrderQuantity;
     }

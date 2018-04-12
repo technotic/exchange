@@ -54,6 +54,14 @@ public class Order {
         return timestampPlaced;
     }
 
+    public boolean isForRIC(String reutersInstrumentCode) {
+        return this.reutersInstrumentCode.equals(reutersInstrumentCode);
+    }
+
+    public boolean isForUser(String user) {
+        return this.user.equals(user);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
