@@ -41,7 +41,7 @@ public class OrderStoreAverageExecutionPriceReportTest {
         orderStore.placeOrder(new Order(BUY, 1000, "VOD.L", bd("100.2"), "User1", 2));
 
         // Expect
-        assertThat(orderStore.averageExecutionPrice("VOD.L"), equalTo(bd("100.2")));
+        assertThat(orderStore.averageExecutionPrice("VOD.L"), equalTo(bd("100.2000")));
     }
 
     @Test
@@ -55,6 +55,6 @@ public class OrderStoreAverageExecutionPriceReportTest {
         orderStore.placeOrder(new Order(BUY, 500, "VOD.L", bd("200"), "User1", 2));
 
         // Expect
-        assertThat(orderStore.averageExecutionPrice("VOD.L"), equalTo(bd("150")));
+        assertThat(orderStore.averageExecutionPrice("VOD.L"), equalTo(bd("133.3333")));
     }
 }

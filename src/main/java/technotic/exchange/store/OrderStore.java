@@ -78,10 +78,16 @@ public class OrderStore {
         } else {
             BigDecimal totalExecutionPrice = executedOrdersForRIC
                     .stream()
-                    .map(Order::getPrice)
+                    .map(order -> new BigDecimal(order.getQuantity()).multiply(order.getPrice()))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            return totalExecutionPrice.divide(new BigDecimal(executedOrdersForRIC.size()), BigDecimal.ROUND_HALF_UP);
+            int totalUnits = executedOrdersForRIC
+                    .stream()
+                    .map(order -> order.getQuantity())
+                    .mapToInt(i -> i)
+                    .sum();
+
+            return totalExecutionPrice.divide(new BigDecimal(totalUnits), 4, BigDecimal.ROUND_HALF_UP);
         }
     }
 
