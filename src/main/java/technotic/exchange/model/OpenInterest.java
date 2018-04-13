@@ -2,11 +2,10 @@ package technotic.exchange.model;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.math.BigDecimal;
 
-import static org.apache.commons.lang.builder.ToStringBuilder.reflectionToString;
+import static java.lang.String.format;
 
 public class OpenInterest {
 
@@ -50,7 +49,7 @@ public class OpenInterest {
 
     @Override
     public String toString() {
-        return reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
+        return format("%d @ %s", totalOrderQuantity, orderPrice);
     }
 
 }

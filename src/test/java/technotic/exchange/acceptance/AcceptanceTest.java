@@ -6,6 +6,9 @@ import technotic.exchange.model.OpenInterest;
 import technotic.exchange.model.Order;
 import technotic.exchange.store.OrderStore;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -82,14 +85,15 @@ public class AcceptanceTest {
 
         placeOrder(SELL, 1000, "VOD.L", "98", "User2", 7);
 
-        assertThat(orderStore.openInterest("VOD.L", BUY), equalTo(
-                asList(
-                        openInterest(1000, "99"))
-        ));
-        assertThat(orderStore.openInterest("VOD.L", SELL), equalTo(emptyList()));
+        verifyOpenInterest("VOD.L", BUY, asList("1000 @ 99"));
+        verifyOpenInterest("VOD.L", SELL, asList());
         verifyAverageExecutionPrice("VOD.L", "99.8800");
         verifyExecutedQuantity("VOD.L", "User1", 500);
         verifyExecutedQuantity("VOD.L", "User2", -500);
+    }
+
+    private void verifyOpenInterest(String ric, Direction direction, List<String> expectedValues) {
+        assertThat(orderStore.openInterest(ric, direction).stream().map(OpenInterest::toString).collect(Collectors.toList()), equalTo(expectedValues));
     }
 
     private void verifyAverageExecutionPrice(String ric, String expectedValue) {
