@@ -48,8 +48,6 @@ public class AcceptanceTest {
 
         verifyOpenInterest("VOD.L", BUY, "1000 @ 99, 1000 @ 101");
         verifyOpenInterest("VOD.L", SELL, "");
-        verifyOpenInterest("VOD.L", BUY, "1000 @ 99, 1000 @ 101");
-        verifyOpenInterest("VOD.L", SELL, "");
         verifyAverageExecutionPrice("VOD.L", "100.2000");
         verifyExecutedQuantity("VOD.L", "User1", -1000);
         verifyExecutedQuantity("VOD.L", "User2", 1000);
@@ -93,9 +91,5 @@ public class AcceptanceTest {
 
     private void placeOrder(Direction direction, int quantity, String ric, String price, String user, long timestamp) {
         orderStore.placeOrder(new Order(direction, quantity, ric, bd(price), user, timestamp));
-    }
-
-    private OpenInterest openInterest(int totalOrderQuantity, String orderPrice) {
-        return new OpenInterest(totalOrderQuantity, bd(orderPrice));
     }
 }
