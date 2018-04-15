@@ -36,8 +36,8 @@ against the order with the lowest price
 3. The exchange should support concurrent placing of orders and running reports
 * Orders/executions should not be lost during concurrent updates
 * Reports should see a consistent but not necessarily up-to-date view of current open orders/executions
-4. The placing of orders is more frequent than running reports (more writes than reads)
-
+4. Initial implementation is biased towards reads (multiple reads can occur concurrently) but only a single
+writer thread can place orders concurrently.
 ## Build and run all Tests
 
     mvn clean install
