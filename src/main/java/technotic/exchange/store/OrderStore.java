@@ -83,7 +83,7 @@ public class OrderStore {
 
             int totalUnits = executedOrdersForRIC
                     .stream()
-                    .map(order -> order.getQuantity())
+                    .map(Order::getQuantity)
                     .mapToInt(i -> i)
                     .sum();
 

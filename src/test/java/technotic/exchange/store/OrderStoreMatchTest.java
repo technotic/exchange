@@ -148,7 +148,6 @@ public class OrderStoreMatchTest {
         assertThat(orderStore.getOpenOrders(), is(empty()));
     }
 
-    // TODO same for SELL with existing BUYs
     @Test
     public void shouldMatchAgainstEarliestExistingOrderWithSamePrice() {
 
