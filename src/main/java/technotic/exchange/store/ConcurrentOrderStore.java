@@ -1,118 +1,80 @@
 package technotic.exchange.store;
 
-import technotic.exchange.model.Direction;
-import technotic.exchange.model.Execution;
-import technotic.exchange.model.OpenInterest;
-import technotic.exchange.model.Order;
+import technotic.exchange.matchers.OrderMatcher;
+import technotic.exchange.model.*;
 import technotic.exchange.sorting.OrderSorter;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.summingInt;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
-public class ConcurrentOrderStore {
+public class ConcurrentOrderStore implements OrderStore {
 
-    private ConcurrentHashMap<String, OrderSomething> orderStore;
+    private ConcurrentHashMap<String, OrderStoreValue> orderStore = new ConcurrentHashMap<>();
+
+    private OrderMatcher orderMatcher;
+
+    public ConcurrentOrderStore(OrderMatcher orderMatcher) {
+        this.orderMatcher = orderMatcher;
+    }
 
     public boolean placeOrder(Order order) {
-
-        readWriteLock.writeLock().lock();
-
-        try {
-            List<Order> matchedOrders = findMatch(order);
-
-            if (matchedOrders.size() == 0) {
-                openOrders.add(order);
-                return false;
-
-            } else if (matchedOrders.size() == 1) {
-                executeOrder(order, matchedOrders.get(0));
-                return true;
-
+        final AtomicBoolean matched = new AtomicBoolean(false);
+        orderStore.computeIfAbsent(order.getKey(), (key) -> new OrderStoreValue());
+        orderStore.compute(order.getKey(), (key, orders) -> {
+            Optional<Order> matchedOrder = orderMatcher.findMatch(order, orders.getOpenOrders());
+            if (matchedOrder.isPresent()) {
+                orders.markExecuted(order, matchedOrder.get());
+                matched.set(true);
+                return orders;
             } else {
-                List<Order> ordersSortedByPriceThenTime = new OrderSorter().sortByPriceThenTime(openOrders);
-                executeOrder(order, ordersSortedByPriceThenTime.get(0));
-                return true;
+                orders.addOpenOrder(order);
+                return orders;
             }
-        } finally {
-            readWriteLock.writeLock().unlock();
-        }
+        });
+        return matched.get();
     }
 
     public List<Order> getOpenOrders() {
-        readWriteLock.readLock().lock();
-        try {
-            return new ArrayList<>(openOrders);
-        } finally {
-            readWriteLock.readLock().unlock();
-        }
+        return orderStore
+                .values()
+                .stream()
+                .map(OrderStoreValue::getOpenOrders)
+                .flatMap(Collection::stream)
+                .collect(toList());
     }
 
     public List<Order> getExecutedOrders() {
-        return executions.stream().map(Execution::getExecutedOrder).collect(Collectors.toList());
-    }
-
-    private void executeOrder(Order executedOrder, Order matchedOrder) {
-//        openOrders.remove(matchedOrder);
-        executions.add(new Execution(executedOrder, matchedOrder));
-    }
-
-    private List<Order> findMatch(Order orderToMatch) {
-        return openOrders.stream().filter(order -> order.matches(orderToMatch)).collect(Collectors.toList());
-    }
-
-    public List<OpenInterest> openInterest(String reutersInstrumentCode, Direction direction) {
-        Map<BigDecimal, Integer> filteredOrdersGroupedByPrice = openOrders
+        return orderStore
+                .values()
                 .stream()
-                .filter(order -> order.getDirection() == direction && order.getReutersInstrumentCode().equals(reutersInstrumentCode))
-                .collect(Collectors.groupingBy(Order::getPrice, summingInt(Order::getQuantity)));
-
-        return filteredOrdersGroupedByPrice
-                .keySet()
-                .stream()
-                .sorted()
-                .map(price -> new OpenInterest(filteredOrdersGroupedByPrice.get(price), price))
-                .collect(Collectors.toList());
-    }
-
-    public BigDecimal averageExecutionPrice(String reutersInstrumentCode) {
-        List<Order> executedOrdersForRIC = executions
-                .stream()
+                .map(OrderStoreValue::getExecutions)
+                .flatMap(Collection::stream)
                 .map(Execution::getExecutedOrder)
-                .filter(order -> order.getReutersInstrumentCode().equals(reutersInstrumentCode))
-                .collect(Collectors.toList());
-
-        if (executedOrdersForRIC.isEmpty()) {
-            return BigDecimal.ZERO;
-        } else {
-            BigDecimal totalExecutionPrice = executedOrdersForRIC
-                    .stream()
-                    .map(order -> new BigDecimal(order.getQuantity()).multiply(order.getPrice()))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-            int totalUnits = executedOrdersForRIC
-                    .stream()
-                    .map(Order::getQuantity)
-                    .mapToInt(i -> i)
-                    .sum();
-
-            return totalExecutionPrice.divide(new BigDecimal(totalUnits), 4, BigDecimal.ROUND_HALF_UP);
-        }
+                .collect(toList());
     }
 
+    @Override
+    public List<OpenInterest> openInterest(String reutersInstrumentCode, Direction direction) {
+        return null;
+    }
+
+    @Override
+    public BigDecimal averageExecutionPrice(String reutersInstrumentCode) {
+        return null;
+    }
+
+    @Override
     public int executedQuantity(String reutersInstrumentCode, String user) {
-        return executions
-                .stream()
-                .filter(execution -> execution.isForRIC(reutersInstrumentCode) && execution.isRelatedTo(user))
-                .map(execution -> execution.getRelatedOrder(user))
-                .mapToInt(order -> order.getQuantity() * order.getDirection().getSign())
-                .sum();
+        return 0;
     }
 }

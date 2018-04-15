@@ -16,7 +16,7 @@ import static technotic.exchange.utils.BigDecimalUtils.bd;
 
 public class OrderStoreOpenInterestReportTest {
 
-    private OrderStore orderStore = new OrderStore();
+    private OrderStore orderStore = new SimpleOrderStore();
 
     @Test
     public void shouldReportOpenInterestForRICandDirectionAsEmptyWhenNoOrders() {

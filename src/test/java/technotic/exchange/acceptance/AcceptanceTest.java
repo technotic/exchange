@@ -5,6 +5,7 @@ import technotic.exchange.model.Direction;
 import technotic.exchange.model.OpenInterest;
 import technotic.exchange.model.Order;
 import technotic.exchange.store.OrderStore;
+import technotic.exchange.store.SimpleOrderStore;
 
 import static java.util.stream.Collectors.joining;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -15,7 +16,7 @@ import static technotic.exchange.utils.BigDecimalUtils.bd;
 
 public class AcceptanceTest {
 
-    private OrderStore orderStore = new OrderStore();
+    private OrderStore orderStore = new SimpleOrderStore();
 
     @Test
     public void acceptanceTest() {

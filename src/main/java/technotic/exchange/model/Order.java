@@ -30,6 +30,10 @@ public class Order {
         this.timestampPlaced = timestampPlaced;
     }
 
+    public String getKey() {
+        return reutersInstrumentCode + ":" + quantity;
+    }
+
     public Direction getDirection() {
         return direction;
     }

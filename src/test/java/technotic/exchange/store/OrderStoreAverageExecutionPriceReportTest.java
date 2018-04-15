@@ -13,7 +13,7 @@ import static technotic.exchange.utils.BigDecimalUtils.bd;
 
 public class OrderStoreAverageExecutionPriceReportTest {
 
-    private OrderStore orderStore = new OrderStore();
+    private OrderStore orderStore = new SimpleOrderStore();
 
     @Test
     public void shouldReportAverageExecutionPriceRICAsEmptyWhenNoOrders() {

@@ -17,7 +17,7 @@ import static technotic.exchange.utils.BigDecimalUtils.bd;
 
 public class OrderStoreConcurrencyTest {
 
-    private OrderStore orderStore = new OrderStore();
+    private OrderStore orderStore = new SimpleOrderStore();
 
     ExecutorService executor = Executors.newFixedThreadPool(3);
 
@@ -32,7 +32,7 @@ public class OrderStoreConcurrencyTest {
             orderStore.placeOrder(new Order(SELL, 1000, "VOD.L", bd("100"), "User1", currentTimeMillis()));
         });
         runManyTimes(1.0, 1000, () -> {
-            assertTrue(!orderStore.getOpenOrders().(orderStore.getExecutedOrders()));
+            assertTrue(!orderStore.getOpenOrders().contains(orderStore.getExecutedOrders()));
             assertTrue(!orderStore.getExecutedOrders().contains(orderStore.getOpenOrders()));
         });
 
@@ -65,10 +65,5 @@ public class OrderStoreConcurrencyTest {
     private long random(int lower, int upper) {
         return (Math.abs(random.nextInt(upper - lower)) + lower);
     }
-
-    private <T> List<T> interection(List<T> list1, List<T> list2) {
-
-    }
-
 
 }
