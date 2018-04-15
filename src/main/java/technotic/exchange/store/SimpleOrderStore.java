@@ -8,14 +8,18 @@ import technotic.exchange.sorting.OrderSorter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.summingInt;
 
 public class SimpleOrderStore implements OrderStore {
+
+    private ReadWriteLock storeLock = new ReentrantReadWriteLock();
 
     private final List<Order> openOrders = new ArrayList<>();
     private final List<Execution> executions = new ArrayList<>();
@@ -23,6 +27,16 @@ public class SimpleOrderStore implements OrderStore {
     @Override
     public boolean placeOrder(Order order) {
 
+        storeLock.writeLock().lock();
+
+        try {
+            return doPlaceOrder(order);
+        } finally {
+            storeLock.writeLock().unlock();
+        }
+    }
+
+    private boolean doPlaceOrder(Order order) {
         List<Order> matchedOrders = findMatch(order);
 
         if (matchedOrders.size() == 0) {
@@ -38,17 +52,6 @@ public class SimpleOrderStore implements OrderStore {
             executeOrder(order, ordersSortedByPriceThenTime.get(0));
             return true;
         }
-
-    }
-
-    @Override
-    public List<Order> getOpenOrders() {
-        return Collections.unmodifiableList(openOrders);
-    }
-
-    @Override
-    public List<Order> getExecutedOrders() {
-        return executions.stream().map(Execution::getExecutedOrder).collect(Collectors.toList());
     }
 
     private void executeOrder(Order executedOrder, Order matchedOrder) {
@@ -58,6 +61,26 @@ public class SimpleOrderStore implements OrderStore {
 
     private List<Order> findMatch(Order orderToMatch) {
         return openOrders.stream().filter(order -> order.matches(orderToMatch)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Order> getOpenOrders() {
+        storeLock.readLock().lock();
+        try {
+            return unmodifiableList(new ArrayList<>(openOrders));
+        } finally {
+            storeLock.readLock().unlock();
+        }
+    }
+
+    @Override
+    public List<Order> getExecutedOrders() {
+        storeLock.readLock().lock();
+        try {
+            return executions.stream().map(Execution::getExecutedOrder).collect(Collectors.toList());
+        } finally {
+            storeLock.readLock().unlock();
+        }
     }
 
     @Override

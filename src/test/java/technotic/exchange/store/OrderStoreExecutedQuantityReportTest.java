@@ -3,8 +3,6 @@ package technotic.exchange.store;
 import org.junit.Test;
 import technotic.exchange.model.Order;
 
-import java.math.BigDecimal;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static technotic.exchange.model.Direction.BUY;
@@ -13,7 +11,7 @@ import static technotic.exchange.utils.BigDecimalUtils.bd;
 
 public class OrderStoreExecutedQuantityReportTest {
 
-    private OrderStore orderStore = new OrderStore();
+    private OrderStore orderStore = new SimpleOrderStore();
 
     @Test
     public void shouldReportExecutedQuantityForRICAndUserAsZeroWhenNoOrders() {
